@@ -1,5 +1,13 @@
 = Changelog
 
+== v2022.7.0 (unreleased)
+
+=== Dependency update
+
+=== Improvements
+
+- https://github.com/eclipse-sirius/sirius-components/issues/1169[#1169] [form] Add support for a form description editor
+
 == v2022.5.0
 
 === Dependency update
