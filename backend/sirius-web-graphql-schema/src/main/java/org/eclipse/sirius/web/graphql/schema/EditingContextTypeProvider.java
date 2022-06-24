@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 Obeo.
+ * Copyright (c) 2021, 2022 Obeo.
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ package org.eclipse.sirius.web.graphql.schema;
  *   childCreationDescriptions(kind: ID!): [ChildCreationDescription!]!
  *   rootObjectCreationDescriptions(domainId: ID!, suggested: Boolean!): [ChildCreationDescription!]!
  *   domains: [Domain!]!
- *   representationDescriptions(classId: ID): EditingContextRepresentationDescriptionConnection!
+ *   representationCreationDescriptions(objectId: ID): EditingContextRepresentationDescriptionConnection!
  *   representation(representationId: ID!): Representation
  *   representations: EditingContextRepresentationConnection!
  * }
@@ -51,7 +51,7 @@ public class EditingContextTypeProvider {
 
     public static final String DOMAINS_FIELD = "domains"; //$NON-NLS-1$
 
-    public static final String REPRESENTATION_DESCRIPTIONS_FIELD = "representationDescriptions"; //$NON-NLS-1$
+    public static final String REPRESENTATION_CREATION_DESCRIPTIONS_FIELD = "representationCreationDescriptions"; //$NON-NLS-1$
 
     public static final String EDITING_CONTEXT_REPRESENTATION_DESCRIPTIONS_CONNECTION = "EditingContextRepresentationDescriptionConnection"; //$NON-NLS-1$
 

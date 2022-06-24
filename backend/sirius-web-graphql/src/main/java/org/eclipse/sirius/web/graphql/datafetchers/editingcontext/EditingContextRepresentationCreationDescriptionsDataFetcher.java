@@ -40,37 +40,37 @@ import graphql.schema.DataFetchingEnvironment;
 import reactor.core.publisher.Mono;
 
 /**
- * The data fetcher used to retrieve the representation descriptions accessible to a viewer.
+ * The data fetcher used to retrieve the representation creation descriptions accessible to a viewer.
  * <p>
  * It will be used to fetch the data for the following GraphQL field:
  * </p>
  *
  * <pre>
  * type EditingContext {
- *   representationDescriptions(classId: ID): EditingContextRepresentationDescriptionConnection!
+ *   representationCreationDescriptions(objectId: ID): EditingContextRepresentationDescriptionConnection!
  * }
  * </pre>
  *
  * @author pcdavid
  * @author sbegaudeau
  */
-@QueryDataFetcher(type = EditingContextTypeProvider.TYPE, field = EditingContextTypeProvider.REPRESENTATION_DESCRIPTIONS_FIELD)
-public class EditingContextRepresentationDescriptionsDataFetcher implements IDataFetcherWithFieldCoordinates<CompletableFuture<Connection<IRepresentationDescription>>> {
+@QueryDataFetcher(type = EditingContextTypeProvider.TYPE, field = EditingContextTypeProvider.REPRESENTATION_CREATION_DESCRIPTIONS_FIELD)
+public class EditingContextRepresentationCreationDescriptionsDataFetcher implements IDataFetcherWithFieldCoordinates<CompletableFuture<Connection<IRepresentationDescription>>> {
 
-    private static final String KIND_ARGUMENT = "kind"; //$NON-NLS-1$
+    private static final String OBJECT_ID_ARGUMENT = "objectId"; //$NON-NLS-1$
 
     private final IEditingContextEventProcessorRegistry editingContextEventProcessorRegistry;
 
-    public EditingContextRepresentationDescriptionsDataFetcher(IEditingContextEventProcessorRegistry editingContextEventProcessorRegistry) {
+    public EditingContextRepresentationCreationDescriptionsDataFetcher(IEditingContextEventProcessorRegistry editingContextEventProcessorRegistry) {
         this.editingContextEventProcessorRegistry = Objects.requireNonNull(editingContextEventProcessorRegistry);
     }
 
     @Override
     public CompletableFuture<Connection<IRepresentationDescription>> get(DataFetchingEnvironment environment) throws Exception {
         String editingContextId = environment.getSource();
-        String kind = environment.getArgument(KIND_ARGUMENT);
+        String objectId = environment.getArgument(OBJECT_ID_ARGUMENT);
 
-        EditingContextRepresentationDescriptionsInput input = new EditingContextRepresentationDescriptionsInput(UUID.randomUUID(), editingContextId, kind);
+        EditingContextRepresentationDescriptionsInput input = new EditingContextRepresentationDescriptionsInput(UUID.randomUUID(), editingContextId, objectId);
 
         // @formatter:off
         return this.editingContextEventProcessorRegistry.dispatchEvent(input.getEditingContextId(), input)
@@ -86,7 +86,7 @@ public class EditingContextRepresentationDescriptionsDataFetcher implements IDat
         // @formatter:off
         List<Edge<IRepresentationDescription>> representationDescriptionEdges = payload.getRepresentationDescriptions().stream()
                 .map(representationDescription -> {
-                    String value = Base64.getEncoder().encodeToString(representationDescription.getId().toString().getBytes());
+                    String value = Base64.getEncoder().encodeToString(representationDescription.getId().getBytes());
                     ConnectionCursor cursor = new DefaultConnectionCursor(value);
                     return new DefaultEdge<>(representationDescription, cursor);
                 })
