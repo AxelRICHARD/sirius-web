@@ -8,6 +8,7 @@
 
 - https://github.com/eclipse-sirius/sirius-components/issues/1169[#1169] [form] Add support for a form description editor
 - https://github.com/eclipse-sirius/sirius-components/issues/1288[#1288] [core] Improve support for precondition expression from representation description
+- https://github.com/eclipse-sirius/sirius-components/issues/1289[#1289] [core] Improve support for title expression from representation description
 
 === New features
 

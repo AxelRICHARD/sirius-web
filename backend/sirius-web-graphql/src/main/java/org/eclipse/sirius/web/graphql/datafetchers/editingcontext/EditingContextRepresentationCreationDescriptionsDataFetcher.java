@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 import org.eclipse.sirius.components.annotations.spring.graphql.QueryDataFetcher;
 import org.eclipse.sirius.components.collaborative.api.IEditingContextEventProcessorRegistry;
-import org.eclipse.sirius.components.collaborative.dto.EditingContextRepresentationDescriptionsInput;
-import org.eclipse.sirius.components.collaborative.dto.EditingContextRepresentationDescriptionsPayload;
+import org.eclipse.sirius.components.collaborative.api.RepresentationCreationDescription;
+import org.eclipse.sirius.components.collaborative.dto.EditingContextRepresentationCreationDescriptionsInput;
+import org.eclipse.sirius.components.collaborative.dto.EditingContextRepresentationCreationDescriptionsPayload;
 import org.eclipse.sirius.components.graphql.api.IDataFetcherWithFieldCoordinates;
-import org.eclipse.sirius.components.representations.IRepresentationDescription;
 import org.eclipse.sirius.web.graphql.pagination.PageInfoWithCount;
 import org.eclipse.sirius.web.graphql.schema.EditingContextTypeProvider;
 
@@ -55,7 +55,7 @@ import reactor.core.publisher.Mono;
  * @author sbegaudeau
  */
 @QueryDataFetcher(type = EditingContextTypeProvider.TYPE, field = EditingContextTypeProvider.REPRESENTATION_CREATION_DESCRIPTIONS_FIELD)
-public class EditingContextRepresentationCreationDescriptionsDataFetcher implements IDataFetcherWithFieldCoordinates<CompletableFuture<Connection<IRepresentationDescription>>> {
+public class EditingContextRepresentationCreationDescriptionsDataFetcher implements IDataFetcherWithFieldCoordinates<CompletableFuture<Connection<RepresentationCreationDescription>>> {
 
     private static final String OBJECT_ID_ARGUMENT = "objectId"; //$NON-NLS-1$
 
@@ -66,25 +66,25 @@ public class EditingContextRepresentationCreationDescriptionsDataFetcher impleme
     }
 
     @Override
-    public CompletableFuture<Connection<IRepresentationDescription>> get(DataFetchingEnvironment environment) throws Exception {
+    public CompletableFuture<Connection<RepresentationCreationDescription>> get(DataFetchingEnvironment environment) throws Exception {
         String editingContextId = environment.getSource();
         String objectId = environment.getArgument(OBJECT_ID_ARGUMENT);
 
-        EditingContextRepresentationDescriptionsInput input = new EditingContextRepresentationDescriptionsInput(UUID.randomUUID(), editingContextId, objectId);
+        EditingContextRepresentationCreationDescriptionsInput input = new EditingContextRepresentationCreationDescriptionsInput(UUID.randomUUID(), editingContextId, objectId);
 
         // @formatter:off
         return this.editingContextEventProcessorRegistry.dispatchEvent(input.getEditingContextId(), input)
-                .filter(EditingContextRepresentationDescriptionsPayload.class::isInstance)
-                .map(EditingContextRepresentationDescriptionsPayload.class::cast)
+                .filter(EditingContextRepresentationCreationDescriptionsPayload.class::isInstance)
+                .map(EditingContextRepresentationCreationDescriptionsPayload.class::cast)
                 .map(this::toConnection)
                 .switchIfEmpty(Mono.just(new DefaultConnection<>(List.of(), new DefaultPageInfo(null, null, false, false))))
                 .toFuture();
         // @formatter:on
     }
 
-    private Connection<IRepresentationDescription> toConnection(EditingContextRepresentationDescriptionsPayload payload) {
+    private Connection<RepresentationCreationDescription> toConnection(EditingContextRepresentationCreationDescriptionsPayload payload) {
         // @formatter:off
-        List<Edge<IRepresentationDescription>> representationDescriptionEdges = payload.getRepresentationDescriptions().stream()
+        List<Edge<RepresentationCreationDescription>> representationDescriptionEdges = payload.getRepresentationCreationDescriptions().stream()
                 .map(representationDescription -> {
                     String value = Base64.getEncoder().encodeToString(representationDescription.getId().getBytes());
                     ConnectionCursor cursor = new DefaultConnectionCursor(value);
@@ -98,7 +98,7 @@ public class EditingContextRepresentationCreationDescriptionsDataFetcher impleme
         if (!representationDescriptionEdges.isEmpty()) {
             endCursor = representationDescriptionEdges.get(representationDescriptionEdges.size() - 1).getCursor();
         }
-        PageInfo pageInfo = new PageInfoWithCount(startCursor, endCursor, false, false, payload.getRepresentationDescriptions().size());
+        PageInfo pageInfo = new PageInfoWithCount(startCursor, endCursor, false, false, payload.getRepresentationCreationDescriptions().size());
         return new DefaultConnection<>(representationDescriptionEdges, pageInfo);
     }
 
